@@ -225,6 +225,18 @@ public class CameraController {
     public  JSONObject getSharedList(@RequestParam("customerId")Integer customerId){
         return cameraService.getSharedList(customerId);
     }
+    /**
+     * 取消分享
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/sharingCancel",method =  RequestMethod.GET)
+    public  JSONObject sharingCancel(@RequestParam("customerId")Integer customerId,
+                                     @RequestParam("accountId")String accountId){
+        return cameraService.delSubAccount(customerId,accountId);
+    }
+
 
     /**
      * 使用序列号获取设备信息

@@ -25,6 +25,7 @@ public interface CameraService {
     JSONObject createSubAccount(Integer customerId,Integer subCustomerId);
     JSONObject shareDevices(Integer customerId,String phone);
     JSONObject getSharedList(Integer customerid);
+    JSONObject delSubAccount(Integer customerId,String accountId);
     int updateAlarmSettings(Integer customer_id, String serial);
     int dealAddDevice(Integer customerId, Camera camera);
     int dealDeleteDevice(Integer customerId, String camera_id);

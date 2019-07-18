@@ -612,7 +612,7 @@ public class CameraServiceImpl implements CameraService {
         String appKey = cameraUserMapper.selectByPrimaryKey(customerId).getAppkey();
 
         String accountName = customerId.toString()+"_"+user.getId().toString(); //作为子账户的一台设备的开头几位
-        String password = user.getPhone()+user.getId().toString();   //作为子账户的的一台设备开头的中间几位
+        String password = user.getPhone();   //作为子账户的的一台设备开头的中间几位
         String passwordMD5 = appKey+"#"+password;
         passwordMD5 = DigestUtils.md5DigestAsHex(passwordMD5.getBytes()).toLowerCase();
 
@@ -670,9 +670,34 @@ public class CameraServiceImpl implements CameraService {
         }
         return ret;
     }
-    public JSONObject delSubAccount(){
-        
-        return null;
+    public JSONObject delSubAccount(Integer customerId,String accountId){
+        String postUrl = "https://open.ys7.com/api/lapp/ram/account/delete";
+
+        JSONObject ret = new JSONObject();
+
+        JSONObject res = getAccessToken(customerId);
+        if(!res.getString("status").equals("200")){
+            return res;
+        }
+        String accessToken = res.getString("msg");
+
+        okhttp3.RequestBody body = new FormBody.Builder()
+                .add("accessToken", accessToken)
+                .add("accountId",accountId).build();
+        Request request = new Request.Builder()
+                .url(postUrl)
+                .post(body)
+                .build();
+
+        String response = this.POST(request);
+        if(null != response){
+            ret.put("msg",JSONObject.parseObject(response).getString("msg"));
+            ret.put("status","200");
+        }else{
+            ret.put("status","500");
+            ret.put("msg","内部错误");
+        }
+        return ret;
     }
 
     @Override
