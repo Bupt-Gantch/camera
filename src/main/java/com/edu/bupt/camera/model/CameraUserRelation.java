@@ -1,4 +1,4 @@
-package com.edu.bupt.wechatpost.model;
+package com.edu.bupt.camera.model;
 
 public class CameraUserRelation {
     private Integer id;

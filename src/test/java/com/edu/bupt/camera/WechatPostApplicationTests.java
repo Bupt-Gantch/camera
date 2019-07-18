@@ -1,4 +1,4 @@
-package com.edu.bupt.wechatpost;
+package com.edu.bupt.camera;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

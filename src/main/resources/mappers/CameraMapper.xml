@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.edu.bupt.wechatpost.dao.CameraMapper" >
-  <resultMap id="BaseResultMap" type="com.edu.bupt.wechatpost.model.Camera" >
+<mapper namespace="com.edu.bupt.camera.dao.CameraMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.bupt.camera.model.Camera" >
     <constructor >
       <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="serial" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -16,7 +16,7 @@
       <arg column="discription" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
-  <!--<resultMap id="ResultMapWithBLOBs" type="com.edu.bupt.wechatpost.model.Camera" >-->
+  <!--<resultMap id="ResultMapWithBLOBs" type="com.edu.bupt.camerael.Camera" >-->
     <!--<constructor >-->
       <!--<idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />-->
       <!--<arg column="serial" jdbcType="VARCHAR" javaType="java.lang.String" />-->
@@ -50,7 +50,7 @@
     delete from camera
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.edu.bupt.wechatpost.model.Camera" >
+  <insert id="insert" parameterType="com.edu.bupt.camera.model.Camera" >
     insert into camera (id, serial, name, 
       last_online, state, version, 
       model, manufature, group, 
@@ -60,7 +60,7 @@
       #{model,jdbcType=VARCHAR}, #{manufature,jdbcType=VARCHAR}, #{group,jdbcType=VARCHAR}, 
       #{store,jdbcType=VARCHAR}, #{discription,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.edu.bupt.wechatpost.model.Camera" >
+  <insert id="insertSelective" parameterType="com.edu.bupt.camera.model.Camera" >
     insert into camera
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -133,7 +133,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.wechatpost.model.Camera" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.camera.model.Camera" >
     update camera
     <set >
       <if test="serial != null" >
@@ -169,7 +169,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.edu.bupt.wechatpost.model.Camera" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.edu.bupt.camera.model.Camera" >
     update camera
     set serial = #{serial,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
@@ -183,7 +183,7 @@
       discription = #{discription,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.wechatpost.model.Camera" >
+  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.camera.model.Camera" >
     update camera
     set serial = #{serial,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},

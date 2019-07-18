@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.edu.bupt.wechatpost.dao.CameraUserMapper" >
-  <resultMap id="BaseResultMap" type="com.edu.bupt.wechatpost.model.CameraUser" >
+<mapper namespace="com.edu.bupt.camera.dao.CameraUserMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.bupt.camera.model.CameraUser" >
     <constructor >
       <idArg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="appKey" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -23,13 +23,13 @@
     delete from camera_user
     where customer_id = #{customerId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.edu.bupt.wechatpost.model.CameraUser" >
+  <insert id="insert" parameterType="com.edu.bupt.camera.model.CameraUser" >
     insert into camera_user (customer_id, appKey, appSecret, 
       accessToken, store)
     values (#{customerId,jdbcType=INTEGER}, #{appkey,jdbcType=VARCHAR}, #{appsecret,jdbcType=VARCHAR}, 
       #{accesstoken,jdbcType=VARCHAR}, #{store,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.edu.bupt.wechatpost.model.CameraUser" >
+  <insert id="insertSelective" parameterType="com.edu.bupt.camera.model.CameraUser" >
     insert into camera_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -66,7 +66,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.wechatpost.model.CameraUser" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.camera.model.CameraUser" >
     update camera_user
     <set >
       <if test="appkey != null" >
@@ -84,7 +84,7 @@
     </set>
     where customer_id = #{customerId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.wechatpost.model.CameraUser" >
+  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.camera.model.CameraUser" >
     update camera_user
     set appKey = #{appkey,jdbcType=VARCHAR},
       appSecret = #{appsecret,jdbcType=VARCHAR},

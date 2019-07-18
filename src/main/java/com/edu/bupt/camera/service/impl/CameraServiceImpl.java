@@ -1,24 +1,19 @@
-package com.edu.bupt.wechatpost.service.impl;
+package com.edu.bupt.camera.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.edu.bupt.wechatpost.dao.CameraMapper;
-import com.edu.bupt.wechatpost.dao.CameraUserMapper;
-import com.edu.bupt.wechatpost.dao.CameraUserRelationMapper;
-import com.edu.bupt.wechatpost.model.Camera;
-import com.edu.bupt.wechatpost.model.CameraUser;
-import com.edu.bupt.wechatpost.model.CameraUserRelation;
-import com.edu.bupt.wechatpost.service.CameraService;
+import com.edu.bupt.camera.dao.CameraMapper;
+import com.edu.bupt.camera.dao.CameraUserMapper;
+import com.edu.bupt.camera.dao.CameraUserRelationMapper;
+import com.edu.bupt.camera.model.Camera;
+import com.edu.bupt.camera.model.CameraUser;
+import com.edu.bupt.camera.model.CameraUserRelation;
+import com.edu.bupt.camera.service.CameraService;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CameraServiceImpl implements CameraService {

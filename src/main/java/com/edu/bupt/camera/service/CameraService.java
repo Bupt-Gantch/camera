@@ -1,11 +1,8 @@
-package com.edu.bupt.wechatpost.service;
+package com.edu.bupt.camera.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.edu.bupt.wechatpost.model.Camera;
-import com.edu.bupt.wechatpost.model.CameraUser;
-
-import java.util.List;
+import com.edu.bupt.camera.model.Camera;
+import com.edu.bupt.camera.model.CameraUser;
 
 public interface CameraService {
 

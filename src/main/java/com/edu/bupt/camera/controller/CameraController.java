@@ -1,16 +1,9 @@
-package com.edu.bupt.wechatpost.controller;
+package com.edu.bupt.camera.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.edu.bupt.wechatpost.model.CameraUser;
-import com.edu.bupt.wechatpost.service.CameraService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import com.edu.bupt.camera.service.CameraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.edu.bupt.wechatpost.model.Camera;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 
 @RestController

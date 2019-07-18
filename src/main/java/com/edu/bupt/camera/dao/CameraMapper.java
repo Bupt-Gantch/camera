@@ -1,6 +1,6 @@
-package com.edu.bupt.wechatpost.dao;
+package com.edu.bupt.camera.dao;
 
-import com.edu.bupt.wechatpost.model.Camera;
+import com.edu.bupt.camera.model.Camera;
 
 public interface CameraMapper {
     int deleteByPrimaryKey(String id);

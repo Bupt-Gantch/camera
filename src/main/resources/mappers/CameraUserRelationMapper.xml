@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.edu.bupt.wechatpost.dao.CameraUserRelationMapper" >
-  <resultMap id="BaseResultMap" type="com.edu.bupt.wechatpost.model.CameraUserRelation" >
+<mapper namespace="com.edu.bupt.camera.dao.CameraUserRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.bupt.camera.model.CameraUserRelation" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="camera_id" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -34,13 +34,13 @@
   </delete>
 
 
-  <insert id="insert" parameterType="com.edu.bupt.wechatpost.model.CameraUserRelation" >
+  <insert id="insert" parameterType="com.edu.bupt.camera.model.CameraUserRelation" >
     insert into camera_user_relation (id, camera_id, customer_id
       )
     values (#{id,jdbcType=INTEGER}, #{cameraId,jdbcType=VARCHAR}, #{customerId,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.edu.bupt.wechatpost.model.CameraUserRelation" >
+  <insert id="insertSelective" parameterType="com.edu.bupt.camera.model.CameraUserRelation" >
     insert into camera_user_relation
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -65,7 +65,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.wechatpost.model.CameraUserRelation" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.camera.model.CameraUserRelation" >
     update camera_user_relation
     <set >
       <if test="cameraId != null" >
@@ -77,7 +77,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.wechatpost.model.CameraUserRelation" >
+  <update id="updateByPrimaryKey" parameterType="com.edu.bupt.camera.model.CameraUserRelation" >
     update camera_user_relation
     set camera_id = #{cameraId,jdbcType=VARCHAR},
       customer_id = #{customerId,jdbcType=INTEGER}
