@@ -1,6 +1,6 @@
-package com.edu.bupt.new_account.dao;
+package com.edu.bupt.camera.dao;
 
-import com.edu.bupt.new_account.model.User;
+import com.edu.bupt.camera.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

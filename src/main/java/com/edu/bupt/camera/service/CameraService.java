@@ -7,7 +7,7 @@ import com.edu.bupt.camera.model.CameraUser;
 public interface CameraService {
 
     boolean validAccessToken(CameraUser user);
-    CameraUser getAccessToken(Integer customerId);
+    JSONObject getAccessToken(Integer customerId);
     JSONObject updateUserInfo(JSONObject userInfo);
     String sendForaccessToken(Integer customerId);
     String sendForaccessToken(Integer customerId,String appKey,String appSecret);
@@ -22,6 +22,9 @@ public interface CameraService {
     JSONObject dealGetDevices(Integer customerId);
     JSONObject updateDeviceInfo(JSONObject cameraJson);
     JSONObject getDeviceBySerial(Integer customerId,String serial);
+    JSONObject createSubAccount(Integer customerId,Integer subCustomerId);
+    JSONObject shareDevices(Integer customerId,String phone);
+    JSONObject getSharedList(Integer customerid);
     int updateAlarmSettings(Integer customer_id, String serial);
     int dealAddDevice(Integer customerId, Camera camera);
     int dealDeleteDevice(Integer customerId, String camera_id);

@@ -1,4 +1,4 @@
-package com.edu.bupt.new_account.model;
+package com.edu.bupt.camera.model;
 
 public class User {
     private Integer id;

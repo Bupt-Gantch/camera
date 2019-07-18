@@ -19,6 +19,12 @@
     from camera_user
     where customer_id = #{customerId,jdbcType=INTEGER}
   </select>
+  <select id ="selectByAppKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List"/>
+    from camera_user
+    where appKey = #{appKey,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from camera_user
     where customer_id = #{customerId,jdbcType=INTEGER}

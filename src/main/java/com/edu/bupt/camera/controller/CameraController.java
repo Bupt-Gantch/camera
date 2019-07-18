@@ -1,6 +1,7 @@
 package com.edu.bupt.camera.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.edu.bupt.camera.model.CameraUser;
 import com.edu.bupt.camera.service.CameraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -199,8 +200,30 @@ public class CameraController {
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public JSONObject register(@RequestBody JSONObject data) {
-
         return cameraService.register(data);
+    }
+
+    /**
+     * 分享设备
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/shareDevices",method =  RequestMethod.GET)
+    public  JSONObject shareDevices(@RequestParam("customerId")Integer customerId,
+                                    @RequestParam("phone")String phone){
+        return cameraService.shareDevices(customerId,phone);
+    }
+
+    /**
+     * 获取分享设备列表
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getSharedList",method =  RequestMethod.GET)
+    public  JSONObject getSharedList(@RequestParam("customerId")Integer customerId){
+        return cameraService.getSharedList(customerId);
     }
 
     /**
@@ -209,12 +232,6 @@ public class CameraController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/getDeviceBySerial",method =  RequestMethod.GET)
-    public  JSONObject getDeviceBySerial(@RequestParam("customerId")Integer customerId,
-                                         @RequestParam("serial")String serial){
-
-        return cameraService.getDeviceBySerial(customerId,serial);
-    }
 
     /**
      * 修改报警参数设置
