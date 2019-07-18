@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.edu.bupt.camera.dao")
-public class WechatPostApplication {
+public class CameraApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WechatPostApplication.class, args);
+        SpringApplication.run(CameraApplication.class, args);
     }
 }
