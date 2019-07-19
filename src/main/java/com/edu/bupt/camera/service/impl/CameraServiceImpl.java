@@ -16,6 +16,7 @@ import com.edu.bupt.camera.model.User;
 import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
+import java.util.Date;
 
 
 @Service
@@ -40,12 +41,10 @@ public class CameraServiceImpl implements CameraService {
 
 
     private JSONObject  getAppInfoByuserInfo(Integer customerId){
-//        this.appInfo.clear();
-//        this.appInfo.put("appKey","2202b037f424462888e3918831dd9680");
-//        this.appInfo.put("appSecret","4e45ac4dbaf66fddb8afb4da7e313cef");
         CameraUser user = cameraUserMapper.selectByPrimaryKey(customerId);
         return JSONObject.parseObject(user.toString());
     }
+
     private boolean isAppkeyRegisted(Integer customerId,String appKey){
         CameraUser user = cameraUserMapper.selectByAppKey(appKey);
         if(user != null && user.getAppkey().equals(appKey)){
@@ -73,14 +72,15 @@ public class CameraServiceImpl implements CameraService {
             resp.put("msg","该AppKey被人注册！");
             return resp;
         }
-        String accessToken = sendForaccessToken(userJson.getInteger("customerId"),userJson.getString("appkey"),
-                                                userJson.getString("appSecret"));
+        JSONObject accessTokenJson = sendForaccessToken(userJson.getInteger("customerId"),
+                                                        userJson.getString("appkey"),
+                                                        userJson.getString("appSecret"));
 
-        if (accessToken.equals("404") || accessToken.equals("500")) {
+        if (accessTokenJson.getString("status").equals("404") || accessTokenJson.getString("status").equals("500")) {
             resp.put("status","400");
             resp.put("msg","注册错误，请检查AppKey和appSecret！");
         } else {
-            user.setAccesstoken(accessToken);
+            user.setAccesstoken(accessTokenJson.getString("msg"));
             try {
                 insert = cameraUserMapper.insertSelective(user);
             }catch (Exception e){
@@ -97,7 +97,7 @@ public class CameraServiceImpl implements CameraService {
 
     public JSONObject updateUserInfo(JSONObject userInfo){
         JSONObject ret = new JSONObject();
-        String reslt =new String();
+        JSONObject reslt =new JSONObject();
         CameraUser user = new CameraUser();
         user.setCustomerId(userInfo.getInteger("customerId"));
         user.setAppkey(userInfo.getString("appKey"));
@@ -106,12 +106,12 @@ public class CameraServiceImpl implements CameraService {
                                     userInfo.getString("appKey"),
                                     userInfo.getString("appSecret"));
 
-        if(reslt.equals("404")||reslt.equals("500")){
+        if(reslt.getString("status").equals("404")||reslt.getString("status").equals("500")){
             ret.put("status","400");
             ret.put("msg","请检查appKey和appSecret并且检查是否注册");
             return ret;
         }
-        user.setAccesstoken(reslt);
+        user.setAccesstoken(reslt.getString("msg"));
 
         int update = cameraUserMapper.updateByPrimaryKeySelective(user);
         if (1 == update){
@@ -150,46 +150,57 @@ public class CameraServiceImpl implements CameraService {
         return  ret;
     }
 
-    public JSONObject getAccessToken(Integer customerId){
+    public JSONObject getAccessToken(Integer customerId) {
         JSONObject ret = new JSONObject();
         CameraUser user = null;
         user = cameraUserMapper.selectByPrimaryKey(customerId);
-        if(null == user){
-            ret.put("status","404");
-            ret.put("msg","未注册");
+        if (null == user) {
+            ret.put("status", "404");
+            ret.put("msg", "未注册");
             return ret;
         }
-        if(!validAccessToken(user)){
-           String accessToken = sendForaccessToken(customerId);
-           if(accessToken.length()>10){ //错误信息的长度不会大于10
-               ret.put("msg",accessToken);
-           }
+        if (!validAccessToken(user)){
+            JSONObject accessTokenJson = sendForaccessToken(customerId);
+            if (accessTokenJson.getString("status").equals("200")) { //错误信息的长度不会大于10
+                String accessToken = accessTokenJson.getString("msg");
+                Date now = new Date();
+
+                user.setAccesstoken(accessToken);
+                user.setTimestamp(now);
+                cameraUserMapper.updateByPrimaryKeySelective(user);
+                System.out.println("token 失效");
+                ret.put("msg", accessToken);
+                ret.put("status", "200");
+            }else{
+                ret.put("msg","获取Token错误");
+                ret.put("status","500");
+            }
         }else{
-            ret.put("msg",user.getAccesstoken());
+            System.out.println("token 有效");
+            ret.put("msg", user.getAccesstoken());
+            ret.put("status", "200");
         }
-        ret.put("status","200");
-        return  ret;
+        return ret;
     }
 
     public boolean validAccessToken(CameraUser user) {
 
-        return false;
-
-//        String timestamp = user.getStore();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//        ParsePosition pos = new ParsePosition(0);
-//        Date last = format.parse(timestamp,pos);
-//        Date now = new Date();
-//        long yet = now.getTime() - last.getTime()/ 1000L; // 距离上一次更新过了多少秒
-//        return yet < 1563856469974L;
+        Date timestamp = user.getTimestamp();
+        if(null == timestamp){
+            return false;
+        }
+        Date last = timestamp;
+        Date now = new Date();
+        long yet = now.getTime() - last.getTime()/ 1000L; // 距离上一次更新过了多少秒
+        return yet < 1563856469974L;
     }
 
 
-    public String sendForaccessToken(Integer customerId,String appKey,String appSecret) {
+    public JSONObject sendForaccessToken(Integer customerId,String appKey,String appSecret) {
         String postUrl = "https://open.ys7.com/api/lapp/token/get";
-        String result = new String();
+        JSONObject result = new JSONObject();
         if(null == customerId){
-            result = "404";
+            result.put("status","404");
         }else {
             okhttp3.RequestBody body = new FormBody.Builder()
                     .add("appKey", appKey)
@@ -201,30 +212,31 @@ public class CameraServiceImpl implements CameraService {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    result = response.body().string();
-                    JSONObject resultJson = JSONObject.parseObject(result);
+
+                    JSONObject resultJson = JSONObject.parseObject(response.body().string());
                     if (true == resultJson.getString("code").equals("200")) {
-                        result = resultJson.getJSONObject("data").getString("accessToken");
+                        result.put("msg",resultJson.getJSONObject("data").getString("accessToken"));
+                        result.put("status","200");
                     } else {
-                        result = "500";
+                        result.put("status","500");
                     }
-                } else {
-                    result = "500";
+                }else{
+                    result.put("status","500");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                result = "500";
+                result.put("status","500");
             }
         }
         return result;
     }
 
-    public String sendForaccessToken(Integer customerId) {
+    public JSONObject sendForaccessToken(Integer customerId) {
         String postUrl = "https://open.ys7.com/api/lapp/token/get";
-        String result = new String();
+        JSONObject result = new JSONObject();
         CameraUser user = cameraUserMapper.selectByPrimaryKey(customerId);
         if(null == user){
-            result = "404";
+            result.put("status","404");
         }else {
             okhttp3.RequestBody body = new FormBody.Builder()
                     .add("appKey", user.getAppkey())
@@ -236,21 +248,20 @@ public class CameraServiceImpl implements CameraService {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    result = response.body().string();
-                    JSONObject resultJson = JSONObject.parseObject(result);
+                    JSONObject resultJson = JSONObject.parseObject(response.body().string());
+
                     if (true == resultJson.getString("code").equals("200")) {
-                        result = resultJson.getJSONObject("data").getString("accessToken");
-                        user.setAccesstoken(result);
-                        cameraUserMapper.updateByPrimaryKeySelective(user);
+                        result.put("msg",resultJson.getJSONObject("data").getString("accessToken"));
+                        result.put("status","200");
                     } else {
-                        result = "500";
+                        result.put("status","500");
                     }
                 } else {
-                    result = "500";
+                    result.put("status","500");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                result = "500";
+                result.put("status","500");
             }
         }
         return result;

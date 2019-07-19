@@ -22,19 +22,8 @@ public class CameraController {
     @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject getToken(@RequestParam("customerId")Integer id) throws Exception{
-        JSONObject ret = new JSONObject();
-        System.out.println(id);
-        String result = cameraService.sendForaccessToken(id);
-        ret.put("status",result);
-        if(result.equals("404")){
-            ret.put("msg","用户未注册");
-        }else if(result.equals("500")){
-            ret.put("msh","内部错误");
-        }else{
-            ret.put("status","200");
-            ret.put("msg",result);
-        }
-        return ret;
+
+        return cameraService.getAccessToken(id);
     }
 
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)

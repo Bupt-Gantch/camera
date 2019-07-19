@@ -1,5 +1,7 @@
 package com.edu.bupt.camera.model;
 
+import java.util.Date;
+
 public class CameraUser {
     private Integer customerId;
 
@@ -9,18 +11,17 @@ public class CameraUser {
 
     private String accesstoken;
 
-    private String store;
+    private Date timestamp;
 
 //    private Integer authority;
 
     public CameraUser(Integer customerId, String appkey,
-                      String appsecret, String accesstoken, String store) {
+                      String appsecret, String accesstoken, Date timestamp) {
         this.customerId = customerId;
         this.appkey = appkey;
         this.appsecret = appsecret;
         this.accesstoken = accesstoken;
-        this.store = store;
-//        this.authority = authority;
+        this.timestamp = timestamp;
 
     }
 
@@ -60,12 +61,11 @@ public class CameraUser {
         this.accesstoken = accesstoken == null ? null : accesstoken.trim();
     }
 
-    public String getStore() {
-        return store;
+    public Date getTimestamp() {
+        return timestamp;
     }
-//    public Integer getAuthority(){
-//        return authority;
-//    }
-//    public void setAuthority(Integer authority){this.authority = authority;}
+    public void setTimestamp(Date timestamp){
+        this.timestamp = timestamp;
+    }
 
 }
