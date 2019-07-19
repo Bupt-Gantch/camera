@@ -1,6 +1,7 @@
 package com.edu.bupt.camera.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.edu.bupt.camera.model.CameraUser;
 import com.edu.bupt.camera.service.CameraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,19 +22,8 @@ public class CameraController {
     @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject getToken(@RequestParam("customerId")Integer id) throws Exception{
-        JSONObject ret = new JSONObject();
-        System.out.println(id);
-        String result = cameraService.sendForaccessToken(id);
-        ret.put("status",result);
-        if(result.equals("404")){
-            ret.put("msg","用户未注册");
-        }else if(result.equals("500")){
-            ret.put("msh","内部错误");
-        }else{
-            ret.put("status","200");
-            ret.put("msg",result);
-        }
-        return ret;
+
+        return cameraService.getAccessToken(id);
     }
 
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
@@ -199,9 +189,43 @@ public class CameraController {
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public JSONObject register(@RequestBody JSONObject data) {
-
         return cameraService.register(data);
     }
+
+    /**
+     * 分享设备
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/shareDevices",method =  RequestMethod.GET)
+    public  JSONObject shareDevices(@RequestParam("customerId")Integer customerId,
+                                    @RequestParam("phone")String phone){
+        return cameraService.shareDevices(customerId,phone);
+    }
+
+    /**
+     * 获取分享设备列表
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getSharedList",method =  RequestMethod.GET)
+    public  JSONObject getSharedList(@RequestParam("customerId")Integer customerId){
+        return cameraService.getSharedList(customerId);
+    }
+    /**
+     * 取消分享
+     * @param customerId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/sharingCancel",method =  RequestMethod.GET)
+    public  JSONObject sharingCancel(@RequestParam("customerId")Integer customerId,
+                                     @RequestParam("accountId")String accountId){
+        return cameraService.delSubAccount(customerId,accountId);
+    }
+
 
     /**
      * 使用序列号获取设备信息
@@ -209,12 +233,6 @@ public class CameraController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/getDeviceBySerial",method =  RequestMethod.GET)
-    public  JSONObject getDeviceBySerial(@RequestParam("customerId")Integer customerId,
-                                         @RequestParam("serial")String serial){
-
-        return cameraService.getDeviceBySerial(customerId,serial);
-    }
 
     /**
      * 修改报警参数设置

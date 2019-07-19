@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.bupt.camera.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.edu.bupt.camera.model.User">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <arg column="openid" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="address" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, openid, email, phone, address
+  </sql>
+    <insert id="insert" parameterType="com.edu.bupt.camera.model.User" keyProperty="id" useGeneratedKeys="true">
+    insert into user_new (id, openid, email, phone, address)
+    values (#{id,jdbcType=INTEGER}, #{openid,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.edu.bupt.camera.model.User">
+        insert into user_new
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="openid != null">
+                openid,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="openid != null">
+                #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.edu.bupt.camera.model.User">
+        update user_new
+        <set>
+            <if test="openid != null">
+                openid = #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.edu.bupt.camera.model.User">
+    update user_new
+    set openid = #{openid,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_new
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPhone" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_new
+        where phone = #{phone}
+    </select>
+
+    <select id="selectByemail" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_new
+        where email = #{email}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_new
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <select id="selectByOpenid" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_new
+        where openid = #{openid}
+    </select>
+
+    <update id="updateByUser" parameterType="com.edu.bupt.camera.model.User">
+        update user_new
+        <set>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+        </set>
+        where openid = #{openid}
+    </update>
+    <select id="searchAllUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_new
+    </select>
+    <delete id="deleteById">
+    DELETE FROM user_new WHERE id=#{id, jdbcType=INTEGER}
+  </delete>
+
+</mapper>

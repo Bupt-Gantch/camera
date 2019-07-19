@@ -10,6 +10,7 @@ public interface CameraUserMapper {
     int insertSelective(CameraUser record);
 
     CameraUser selectByPrimaryKey(Integer customerId);
+    CameraUser selectByAppKey(String appKey);
 
     int updateByPrimaryKeySelective(CameraUser record);
 
