@@ -39,7 +39,7 @@
 
         <!-- targetPackage：生成的实体类所在的包 -->
         <!-- targetProject：生成的实体类所在的硬盘位置 -->
-        <javaModelGenerator targetPackage="com.edu.bupt.wechatpost.model"
+        <javaModelGenerator targetPackage="com.edu.bupt.camera.model"
                             targetProject=".\src\main\java">
             <!-- 是否允许子包 -->
             <property name="enableSubPackages" value="false" />
@@ -60,7 +60,7 @@
 
         <!-- targetPackage 和 targetProject：生成的 interface 文件的包和位置 -->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.edu.bupt.wechatpost.dao" targetProject=".\src\main\java">
+                             targetPackage="com.edu.bupt.camera.dao" targetProject=".\src\main\java">
             <!-- 针对 oracle 数据库的一个配置，是否把 schema 作为字包名 -->
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
