@@ -345,10 +345,10 @@ public class CameraServiceImpl implements CameraService {
         String response = this.POST(request);
         if(null != response){
             ret.put("status","200");
-            ret.put("data",JSONObject.parseObject(response).getJSONArray("data"));
+            ret.put("msg",JSONObject.parseObject(response).getJSONArray("data"));
         }else{
             ret.put("status","500");
-            ret.put("data","内部错误");
+            ret.put("msg","内部错误");
         }
         return ret;
     }
@@ -374,10 +374,10 @@ public class CameraServiceImpl implements CameraService {
         String response = this.POST(request);
         if(null != response){
             ret.put("status","200");
-            ret.put("data",JSONObject.parseObject(response).getJSONArray("data"));
+            ret.put("msg",JSONObject.parseObject(response).getJSONArray("data"));
         }else{
             ret.put("status","500");
-            ret.put("data","内部错误");
+            ret.put("msg","内部错误");
         }
         return ret;
     }
@@ -402,11 +402,11 @@ public class CameraServiceImpl implements CameraService {
 
         String response = this.POST(request);
         if(null != response){
-            ret.put("data",JSONObject.parseObject(response).getJSONObject("data"));
+            ret.put("msg",JSONObject.parseObject(response).getJSONObject("data"));
             ret.put("status","200");
         }else{
             ret.put("status","500");
-            ret.put("data","内部错误");
+            ret.put("msg","内部错误");
         }
         return ret;
     }
@@ -528,11 +528,11 @@ public class CameraServiceImpl implements CameraService {
 
         String response = this.POST(request);
         if(null != response){
-            ret.put("data",JSONObject.parseObject(response).getJSONArray("data"));
+            ret.put("msg",JSONObject.parseObject(response).getJSONArray("data"));
             ret.put("status","200");
         }else{
             ret.put("status","500");
-            ret.put("data","内部错误");
+            ret.put("msg","内部错误");
         }
         return ret;
     }
