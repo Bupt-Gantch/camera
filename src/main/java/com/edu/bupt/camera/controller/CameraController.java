@@ -233,6 +233,11 @@ public class CameraController {
      * @return
      * @throws Exception
      */
+    @RequestMapping(value = "/getDeviceBySerial",method =  RequestMethod.GET)
+    public  JSONObject getDeviceBySerial(@RequestParam("customerId")Integer customerId,
+                                     @RequestParam("serial")String serial){
+        return cameraService.getDeviceBySerial(customerId,serial);
+    }
 
     /**
      * 修改报警参数设置
