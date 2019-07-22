@@ -57,7 +57,6 @@ public class CameraServiceImpl implements CameraService {
         return false;
     }
 
-
     //chewangle
     public JSONObject register(JSONObject userJson){
         JSONObject resp = new JSONObject();
@@ -65,7 +64,7 @@ public class CameraServiceImpl implements CameraService {
         CameraUser user = new CameraUser();
 
         user.setCustomerId(userJson.getInteger("customerId"));
-        user.setAppkey(userJson.getString("appkey"));
+        user.setAppkey(userJson.getString("appKey"));
         user.setAppsecret(userJson.getString("appSecret"));
         if(true == isAppkeyRegisted(user.getCustomerId(),user.getAppkey())){
             resp.put("status","403");
@@ -73,7 +72,7 @@ public class CameraServiceImpl implements CameraService {
             return resp;
         }
         JSONObject accessTokenJson = sendForaccessToken(userJson.getInteger("customerId"),
-                                                        userJson.getString("appkey"),
+                                                        userJson.getString("appKey"),
                                                         userJson.getString("appSecret"));
 
         if (accessTokenJson.getString("status").equals("404") || accessTokenJson.getString("status").equals("500")) {
@@ -212,7 +211,6 @@ public class CameraServiceImpl implements CameraService {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-
                     JSONObject resultJson = JSONObject.parseObject(response.body().string());
                     if (true == resultJson.getString("code").equals("200")) {
                         result.put("msg",resultJson.getJSONObject("data").getString("accessToken"));
