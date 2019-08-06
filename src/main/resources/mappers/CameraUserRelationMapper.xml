@@ -9,7 +9,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, camera_id, customer_id
+    id,camera_id, customer_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -17,6 +17,14 @@
     from camera_user_relation
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id ="selectByCameraId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List"/>
+    from camera_user_relation
+    where camera_id=#{cameraId,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectCameraIdByCustomerId" resultType="java.lang.System" parameterType="java.lang.Integer" >
     select  camera_id
     <!--<include refid="Base_Column_List" />-->

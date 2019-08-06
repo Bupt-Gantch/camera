@@ -1,5 +1,6 @@
 package com.edu.bupt.camera.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.edu.bupt.camera.dao.CameraMapper;
 import com.edu.bupt.camera.dao.CameraUserMapper;
@@ -57,6 +58,30 @@ public class CameraServiceImpl implements CameraService {
         return false;
     }
 
+    private boolean updateDeviceTables(Integer customerId, JSONArray data){
+        boolean ret = true;
+        for(Integer i = 0; i< data.size(); i++){
+            JSONObject camera = data.getJSONObject(i);
+            System.out.println(camera.toJSONString());
+            if(null == relationMapper.selectByCameraId(camera.getString("deviceSerial"))){
+                CameraUserRelation relation = new CameraUserRelation();
+                relation.setCameraId(camera.getString("deviceSerial"));
+                relation.setCustomerId(customerId);
+                if(1 == relationMapper.insertSelective(relation)){
+                    Camera cameraModel = new Camera();
+                    cameraModel.setName(camera.getString("channelName"));
+                    cameraModel.setSerial(camera.getString("deviceSerial"));
+                    cameraModel.setId(camera.getString("deviceSerial"));
+                    if(1 != cameraMapper.insertSelective(cameraModel)){
+                        ret = false;
+                    }
+                }
+
+            }
+        }
+        return ret;
+    }
+
     //chewangle
     public JSONObject register(JSONObject userJson){
         JSONObject resp = new JSONObject();
@@ -74,7 +99,6 @@ public class CameraServiceImpl implements CameraService {
         JSONObject accessTokenJson = sendForaccessToken(userJson.getInteger("customerId"),
                                                         userJson.getString("appKey"),
                                                         userJson.getString("appSecret"));
-
         if (accessTokenJson.getString("status").equals("404") || accessTokenJson.getString("status").equals("500")) {
             resp.put("status","400");
             resp.put("msg","注册错误，请检查AppKey和appSecret！");
@@ -184,14 +208,15 @@ public class CameraServiceImpl implements CameraService {
 
     public boolean validAccessToken(CameraUser user) {
 
-        Date timestamp = user.getTimestamp();
-        if(null == timestamp){
-            return false;
-        }
-        Date last = timestamp;
-        Date now = new Date();
-        long yet = now.getTime() - last.getTime()/ 1000L; // 距离上一次更新过了多少秒
-        return yet < 1563856469974L;
+        return false;
+//        Date timestamp = user.getTimestamp();
+//        if(null == timestamp){
+//            return false;
+//        }
+//        Date last = timestamp;
+//        Date now = new Date();
+//        long yet = now.getTime() - last.getTime()/ 1000L; // 距离上一次更新过了多少秒
+//        return yet < 1563856469974L;
     }
 
 
@@ -528,6 +553,9 @@ public class CameraServiceImpl implements CameraService {
         if(null != response){
             ret.put("msg",JSONObject.parseObject(response).getJSONArray("data"));
             ret.put("status","200");
+            if(updateDeviceTables(customerId,ret.getJSONArray("msg"))){
+                System.out.println("update devices tables error");
+            }
         }else{
             ret.put("status","500");
             ret.put("msg","内部错误");

@@ -13,6 +13,8 @@ public interface CameraUserRelationMapper {
 
     int insertSelective(CameraUserRelation record);
 
+    CameraUserRelation selectByCameraId(String cameraId);
+
     CameraUserRelation selectByPrimaryKey(Integer id);
 
     List<String> selectCameraIdByCustomerId(Integer id);
