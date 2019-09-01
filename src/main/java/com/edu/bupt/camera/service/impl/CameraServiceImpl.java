@@ -18,6 +18,7 @@ import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
@@ -38,8 +39,9 @@ public class CameraServiceImpl implements CameraService {
     @Autowired
     private UserMapper userMapper;
 
+    private JSONObject AccessUrl(String url){
 
-
+    }
 
     private JSONObject  getAppInfoByuserInfo(Integer customerId){
         CameraUser user = cameraUserMapper.selectByPrimaryKey(customerId);
@@ -53,35 +55,6 @@ public class CameraServiceImpl implements CameraService {
         }
         return false;
     }
-
-    private boolean isSubAccount(Integer customerId,String appKey){
-        return false;
-    }
-
-    private boolean updateDeviceTables(Integer customerId, JSONArray data){
-        boolean ret = true;
-        for(Integer i = 0; i< data.size(); i++){
-            JSONObject camera = data.getJSONObject(i);
-            System.out.println(camera.toJSONString());
-            if(null == relationMapper.selectByCameraId(camera.getString("deviceSerial"))){
-                CameraUserRelation relation = new CameraUserRelation();
-                relation.setCameraId(camera.getString("deviceSerial"));
-                relation.setCustomerId(customerId);
-                if(1 == relationMapper.insertSelective(relation)){
-                    Camera cameraModel = new Camera();
-                    cameraModel.setName(camera.getString("channelName"));
-                    cameraModel.setSerial(camera.getString("deviceSerial"));
-                    cameraModel.setId(camera.getString("deviceSerial"));
-                    if(1 != cameraMapper.insertSelective(cameraModel)){
-                        ret = false;
-                    }
-                }
-
-            }
-        }
-        return ret;
-    }
-
     //chewangle
     public JSONObject register(JSONObject userJson){
         JSONObject resp = new JSONObject();
@@ -207,16 +180,7 @@ public class CameraServiceImpl implements CameraService {
     }
 
     public boolean validAccessToken(CameraUser user) {
-
         return false;
-//        Date timestamp = user.getTimestamp();
-//        if(null == timestamp){
-//            return false;
-//        }
-//        Date last = timestamp;
-//        Date now = new Date();
-//        long yet = now.getTime() - last.getTime()/ 1000L; // 距离上一次更新过了多少秒
-//        return yet < 1563856469974L;
     }
 
 
@@ -322,7 +286,20 @@ public class CameraServiceImpl implements CameraService {
 
         String postUrl = "https://open.ys7.com/api/lapp/live/address/get";
         JSONObject ret = new JSONObject();
-
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
@@ -350,7 +327,20 @@ public class CameraServiceImpl implements CameraService {
     public JSONObject openLiveBydeviceSerial(Integer customerId,String deviceSerial,String Cam){
         String postUrl = "https://open.ys7.com/api/lapp/live/video/open";
         JSONObject ret = new JSONObject();
-
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
@@ -378,8 +368,21 @@ public class CameraServiceImpl implements CameraService {
 
     public JSONObject closeLiveBydeviceSerial(Integer customerId,String deviceSerial,String Cam){
         String postUrl = "https://open.ys7.com/api/lapp/live/video/close";
-
         JSONObject ret = new JSONObject();
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
@@ -407,8 +410,21 @@ public class CameraServiceImpl implements CameraService {
 
     public JSONObject getDevicecapacity(Integer customerId, String deviceSerial){
         String postUrl = "https://open.ys7.com/api/lapp/device/capacity";
-
         JSONObject ret = new JSONObject();
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
@@ -438,13 +454,11 @@ public class CameraServiceImpl implements CameraService {
         String postUrl = "https://open.ys7.com/api/lapp/device/add";
         Camera camera = new Camera();
         JSONObject ret = new JSONObject();
-
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
         }
         String accessToken = res.getString("msg");
-
         okhttp3.RequestBody body = new FormBody.Builder()
                 .add("accessToken", accessToken)
                 .add("deviceSerial",serial)
@@ -453,7 +467,6 @@ public class CameraServiceImpl implements CameraService {
                 .url(postUrl)
                 .post(body)
                 .build();
-
         String response = this.POST(request);
         if(null != response){
             // add device into database
@@ -490,75 +503,50 @@ public class CameraServiceImpl implements CameraService {
     }
 
     public JSONObject delDevice(Integer customerId,String deviceSerial){
-        String postUrl = "https://open.ys7.com/api/lapp/device/delete";
         JSONObject ret = new JSONObject();
-
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken)
-                .add("deviceSerial",deviceSerial).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-
-        String response = this.POST(request);
-        System.out.println(response);
-        if(null != response){
-
-            ret.put("status","200");
-            for (int i = 0; i<3; i++) {
-                int delete = dealDeleteDevice(customerId,deviceSerial);
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null != relation) {
+                int delete = dealDeleteDevice(customerId, deviceSerial);
                 if (delete != 0) {
-                    ret.put("msg",JSONObject.parseObject(response).getString("msg"));
-                    ret.put("status","200");
-                    break;
+                    ret.put("msg", "删除成功");
+                    ret.put("status", "200");
                 } else {
-                    ret.put("status","500");
-                    ret.put("msg","sql fail");
-                    continue;
+                    ret.put("status", "500");
+                    ret.put("msg", "sql fail");
                 }
+            } else {
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
             }
-        }else{
-            ret.put("status","404");
-            ret.put("msg","该设备不存在");
+        }else {
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
         }
         return ret;
     }
 
     @Override
     public JSONObject dealGetDevices(Integer customerId){
-        String postUrl = "https://open.ys7.com/api/lapp/camera/list";
         JSONObject ret = new JSONObject();
-
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-
-        String response = this.POST(request);
-        if(null != response){
-            ret.put("msg",JSONObject.parseObject(response).getJSONArray("data"));
-            ret.put("status","200");
-            if(updateDeviceTables(customerId,ret.getJSONArray("msg"))){
-                System.out.println("update devices tables error");
+        JSONArray cameraInfo = new JSONArray();
+        List<String> cameraList = relationMapper.selectCameraIdByCustomerId(customerId);
+        if (null != cameraList && !cameraList.isEmpty()) {
+            JSONObject deviceInfo = new JSONObject();
+            for (int i = 0; i < cameraList.size(); i++) {
+                deviceInfo = getDeviceBySerial(customerId,cameraList.get(i));
+                if(deviceInfo.getString("status").equals("200")) {
+                    cameraInfo.add(i,deviceInfo.getJSONObject("msg"));
+                }
+                deviceInfo.clear();
             }
+            ret.put("msg",cameraInfo);
+            ret.put("status","200");
         }else{
-            ret.put("status","500");
-            ret.put("msg","内部错误");
+            ret.put("msg","没有找到该用户的设备！");
+            ret.put("status","404");
         }
         return ret;
     }
@@ -566,9 +554,21 @@ public class CameraServiceImpl implements CameraService {
 
     public JSONObject setDeviceName(Integer customerId,String deviceSerial,String deviceName){
         String postUrl = "https://open.ys7.com/api/lapp/device/name/update";
-
         JSONObject ret = new JSONObject();
-
+        Camera camera = cameraMapper.selectByPrimaryKey(deviceSerial);
+        System.out.println(camera.toString());
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(deviceSerial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;
@@ -598,9 +598,20 @@ public class CameraServiceImpl implements CameraService {
 
     public JSONObject getDeviceBySerial(Integer customerId,String serial){
         String postUrl = "https://open.ys7.com/api/lapp/device/info";
-
+        Camera camera = cameraMapper.selectByPrimaryKey(serial);
         JSONObject ret = new JSONObject();
-
+        if(null != camera) {
+            CameraUserRelation relation = relationMapper.selectByCameraId(serial);
+            if (null == relation){
+                ret.put("status", "404");
+                ret.put("msg", "该设备不属于当前用户！");
+                return ret;
+            }
+        }else{
+            ret.put("status", "404");
+            ret.put("msg", "该设备不存在！");
+            return ret;
+        }
         JSONObject res = getAccessToken(customerId);
         if(!res.getString("status").equals("200")){
             return res;

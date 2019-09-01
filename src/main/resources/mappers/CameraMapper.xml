@@ -6,33 +6,11 @@
       <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="serial" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="last_online" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="version" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="model" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="manufature" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="group" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="store" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="discription" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
-  <!--<resultMap id="ResultMapWithBLOBs" type="com.edu.bupt.camerael.Camera" >-->
-    <!--<constructor >-->
-      <!--<idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="serial" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="name" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="last_online" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="version" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="model" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="manufature" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="group" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="store" jdbcType="VARCHAR" javaType="java.lang.String" />-->
-      <!--<arg column="discription" jdbcType="LONGVARCHAR" javaType="java.lang.String" />-->
-    <!--</constructor>-->
-  <!--</resultMap>-->
+
   <sql id="Base_Column_List" >
-    id, serial, name, last_online, state, version, model, manufature, group, store,discription
+    id, serial, name
   </sql>
   <!--<sql id="Blob_Column_List" >-->
     <!--discription-->
@@ -41,9 +19,7 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
-    <!--,-->
-    <!--<include refid="Blob_Column_List" />-->
-    <!--from camera-->
+    from camera
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >

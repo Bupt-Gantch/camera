@@ -25,9 +25,8 @@
     where camera_id=#{cameraId,jdbcType=VARCHAR}
   </select>
 
-  <select id="selectCameraIdByCustomerId" resultType="java.lang.System" parameterType="java.lang.Integer" >
+  <select id="selectCameraIdByCustomerId" resultType="java.lang.String" parameterType="java.lang.Integer" >
     select  camera_id
-    <!--<include refid="Base_Column_List" />-->
     from camera_user_relation
     where customer_id = #{id,jdbcType=INTEGER}
   </select>
