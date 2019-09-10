@@ -26,22 +26,6 @@ public class CameraController {
         return cameraService.getAccessToken(id);
     }
 
-    @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public JSONObject updateUserInfo(@RequestBody JSONObject userInfo) throws Exception{
-        return cameraService.updateUserInfo(userInfo);
-    }
-
-    /**
-     * 获取摄像头流地址列表   cewanle
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/getLiveAddress", method = RequestMethod.GET)
-    @ResponseBody
-    public JSONObject getLiveAddressList(@RequestParam("customerId")Integer id) throws Exception{
-
-        return cameraService.getLiveAddressList(id);
-    }
 
     /**
      * 获取摄像头流地址列表   测试完成
@@ -53,7 +37,6 @@ public class CameraController {
     @ResponseBody
     public JSONObject getLiveAddressbySerial(@RequestParam("customerId")Integer id,
                                              @RequestParam("serial")String serial) throws Exception{
-
         return cameraService.getLiveAddrBydeviceSerial(id,serial,"1");
     }
 
@@ -70,8 +53,6 @@ public class CameraController {
     public JSONObject openLiveByserial(@RequestParam("customerId")Integer id,
                                         @RequestParam("serial") String serial) throws Exception{
 
-        System.out.println(id);
-        System.out.println(serial);
         return cameraService.openLiveBydeviceSerial(id,serial,"1");
 
     }
@@ -86,11 +67,7 @@ public class CameraController {
     @ResponseBody
     public JSONObject closeLiveByserial(@RequestParam("customerId")Integer id,
                                        @RequestParam(value = "serial")String serial) throws Exception{
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
         return cameraService.closeLiveBydeviceSerial(id,serial,"1");
-
     }
 
 
@@ -104,9 +81,7 @@ public class CameraController {
     @ResponseBody
     public JSONObject getDevicecapacitybySerial(@RequestParam("customerId")Integer id,
                                                 @RequestParam(value = "serial", required = false)String serial) throws Exception{
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
+
         return cameraService.getDevicecapacity(id,serial);
     }
 
@@ -155,20 +130,6 @@ public class CameraController {
         return cameraService.dealGetDevices(customerId);
     }
 
-
-//    @RequestMapping(value = "/addDevice", method = RequestMethod.GET)
-//    @ResponseBody
-//    public JSONObject addDevice(@RequestParam(value = "user",required = true) String user,
-//                                @RequestParam(value = "passwd",required = true) String passwd,
-//                                @RequestParam(value = "serial",required = true) String serial,
-//                                @RequestParam(value = "validateCode",required = true) String validateCode) throws Exception{
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
-//        return cameraService.addDevice(userInfo,serial,validateCode);
-//    }
-
-
     /**
      * 修改摄像头信息 测试完成
      * @param body
@@ -183,49 +144,18 @@ public class CameraController {
 
     /**
      * 用户注册 测试完成
-     * @param data
+     * @param customerId
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public JSONObject register(@RequestBody JSONObject data) {
+    public JSONObject register(@RequestParam("customerId")Integer customerId) {
+        JSONObject data = new JSONObject();
+        data.put("customerId",customerId);
+        data.put("appKey","9a51a0bfb7234668a6cbfb5b7c23271d");
+        data.put("appSecret","cda559f8fdfd5d82234b48c0db9d61c9");
         return cameraService.register(data);
     }
-
-    /**
-     * 分享设备
-     * @param customerId
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/shareDevices",method =  RequestMethod.GET)
-    public  JSONObject shareDevices(@RequestParam("customerId")Integer customerId,
-                                    @RequestParam("phone")String phone){
-        return cameraService.shareDevices(customerId,phone);
-    }
-
-    /**
-     * 获取分享设备列表
-     * @param customerId
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/getSharedList",method =  RequestMethod.GET)
-    public  JSONObject getSharedList(@RequestParam("customerId")Integer customerId){
-        return cameraService.getSharedList(customerId);
-    }
-    /**
-     * 取消分享
-     * @param customerId
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/sharingCancel",method =  RequestMethod.GET)
-    public  JSONObject sharingCancel(@RequestParam("customerId")Integer customerId,
-                                     @RequestParam("accountId")String accountId){
-        return cameraService.delSubAccount(customerId,accountId);
-    }
-
 
     /**
      * 使用序列号获取设备信息
@@ -238,77 +168,4 @@ public class CameraController {
                                      @RequestParam("serial")String serial){
         return cameraService.getDeviceBySerial(customerId,serial);
     }
-
-    /**
-     * 修改报警参数设置
-     * @param data
-     * @return
-     * @throws Exception
-     */
-//    @RequestMapping(value = "/updateAlarmSettings", method = RequestMethod.POST)
-//    public JSONObject updateAlarmSettings(@RequestBody JSONObject data) throws Exception{
-//
-//        String user = data.getString("user");
-//        String passwd = data.getString("passwd");
-//        String serial = data.getString("serial");
-//
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
-//        return cameraService.updateAlarmSettings(userInfo, serial);
-//    }
-
-    /**
-     * 获取摄像头截图
-     * @param method 排序方式
-     * @return
-     * @throws Exception
-     */
-//    @RequestMapping(value = "/getPhotos", method = RequestMethod.GET)
-//    public List<Photo> getPhotos(@RequestParam(value = "user",required = true) String user,
-//                                 @RequestParam(value = "passwd",required = true) String passwd,
-//                                 @RequestParam(value = "method",required = false) String method) throws Exception{
-//
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
-//        return cameraService.getPhotos(userInfo, method);
-//    }
-
-    /**
-     * 获取摄像头录屏
-     * @param method  排序方式
-     * @return
-     * @throws Exception
-     */
-//    @RequestMapping(value = "/getVideoes", method = RequestMethod.GET)
-//    public List<Video> getVideoes(@RequestParam(value = "user",required = true) String user,
-//                                 @RequestParam(value = "passwd",required = true) String passwd,
-//                                 @RequestParam(value = "method",required = false) String method) throws Exception{
-//
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
-//        return cameraService.getVideoes(userInfo, method);
-//    }
-
-    /**
-     * 控制报警器
-     * @param type 报警类型（声/光/声光）
-     * @param state 开关
-     * @return
-     * @throws Exception
-     */
-//    @RequestMapping(value = "/alarm", method = RequestMethod.GET)
-//    public List<Video> setAlarm(@RequestParam(value = "user",required = true) String user,
-//                                  @RequestParam(value = "passwd",required = true) String passwd,
-//                                  @RequestParam(value = "type",required = true) String type,
-//                                  @RequestParam(value = "state",required = true) String state) throws Exception{
-//
-//        JSONObject userInfo = new JSONObject();
-//        userInfo.put("user",user);
-//        userInfo.put("passwd",passwd);
-//        return cameraService.setAlarm(userInfo, type, state);
-//    }
-
 }

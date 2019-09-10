@@ -39,9 +39,6 @@ public class CameraServiceImpl implements CameraService {
     @Autowired
     private UserMapper userMapper;
 
-    private JSONObject AccessUrl(String url){
-
-    }
 
     private JSONObject  getAppInfoByuserInfo(Integer customerId){
         CameraUser user = cameraUserMapper.selectByPrimaryKey(customerId);
@@ -64,11 +61,6 @@ public class CameraServiceImpl implements CameraService {
         user.setCustomerId(userJson.getInteger("customerId"));
         user.setAppkey(userJson.getString("appKey"));
         user.setAppsecret(userJson.getString("appSecret"));
-        if(true == isAppkeyRegisted(user.getCustomerId(),user.getAppkey())){
-            resp.put("status","403");
-            resp.put("msg","该AppKey被人注册！");
-            return resp;
-        }
         JSONObject accessTokenJson = sendForaccessToken(userJson.getInteger("customerId"),
                                                         userJson.getString("appKey"),
                                                         userJson.getString("appSecret"));
@@ -91,35 +83,6 @@ public class CameraServiceImpl implements CameraService {
         return resp;
     }
 
-    public JSONObject updateUserInfo(JSONObject userInfo){
-        JSONObject ret = new JSONObject();
-        JSONObject reslt =new JSONObject();
-        CameraUser user = new CameraUser();
-        user.setCustomerId(userInfo.getInteger("customerId"));
-        user.setAppkey(userInfo.getString("appKey"));
-        user.setAppsecret(userInfo.getString("appSecret"));
-        reslt = sendForaccessToken(userInfo.getInteger("customerId"),
-                                    userInfo.getString("appKey"),
-                                    userInfo.getString("appSecret"));
-
-        if(reslt.getString("status").equals("404")||reslt.getString("status").equals("500")){
-            ret.put("status","400");
-            ret.put("msg","请检查appKey和appSecret并且检查是否注册");
-            return ret;
-        }
-        user.setAccesstoken(reslt.getString("msg"));
-
-        int update = cameraUserMapper.updateByPrimaryKeySelective(user);
-        if (1 == update){
-            ret.put("status","200");
-            ret.put("msg","修改信息成功");
-        }else{
-            ret.put("status","400");
-            ret.put("msg","修改信息失败,请检查appKey和appSecret");
-        }
-        return ret;
-    }
-
     private String POST(Request request){
         String ret = null;
         String result = new String();
@@ -129,7 +92,8 @@ public class CameraServiceImpl implements CameraService {
                 result = response.body().string();
                 JSONObject resultJson = JSONObject.parseObject(result);
                 System.out.println("POST Result:"+result);
-                if (true == resultJson.getString("code").equals("200")) {
+                if (true == resultJson.getString("code").equals("200") ||
+                        true == resultJson.getString("code").equals("20017")) {
                     ret = result;
                 }else{
                     //("post code error:"+resultJson.getString("code"));
@@ -253,36 +217,7 @@ public class CameraServiceImpl implements CameraService {
         }
         return result;
     }
-
-    public JSONObject getLiveAddressList(Integer customerId){
-
-        String postUrl = "https://open.ys7.com/api/lapp/live/video/list";
-        JSONObject ret = new JSONObject();
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-        String result  = this.POST(request);
-        if(null != result){
-            JSONObject resultJson = JSONObject.parseObject(result);
-            ret.put("data",resultJson.getJSONArray("data"));
-            ret.put("status","200");
-        }else{
-            ret.put("status","500");
-            ret.put("data","内部错误");
-        }
-        return ret;
-    }
-
-    public JSONObject getLiveAddrBydeviceSerial(Integer customerId, String deviceSerial,String Cam){
+        public JSONObject getLiveAddrBydeviceSerial(Integer customerId, String deviceSerial,String Cam){
 
         String postUrl = "https://open.ys7.com/api/lapp/live/address/get";
         JSONObject ret = new JSONObject();
@@ -305,7 +240,6 @@ public class CameraServiceImpl implements CameraService {
             return res;
         }
         String accessToken = res.getString("msg");
-
         okhttp3.RequestBody body = new FormBody.Builder()
                 .add("accessToken", accessToken)
                 .add("source",deviceSerial+":"+Cam).build();
@@ -474,15 +408,12 @@ public class CameraServiceImpl implements CameraService {
             camera.setId(id);
             camera.setSerial(serial);
             camera.setName(name);
-            if (null == camera.getName()){ // 取id最后四位作为默认名
-                camera.setName("camera_"+ id.substring(id.length()-4, id.length()));
-            }
-            // 设置云平台的设备信息
-            setDeviceName(customerId,camera.getSerial(),camera.getName());
             // 存设备信息到数据库
             for (int i =0; i<3; i++) {
                 int add = dealAddDevice(customerId, camera);
                 if (add != 0) {
+                    // 设置云平台的设备信息
+                    setDeviceName(customerId,camera.getSerial(),camera.getName());
                     ret.put("status","200");
                     JSONObject cameraJson = new JSONObject();
                     cameraJson.put("cameraId",camera.getId());
@@ -636,128 +567,11 @@ public class CameraServiceImpl implements CameraService {
         }
         return ret;
     }
-
-    public JSONObject createSubAccount(Integer customerId,Integer subCustomerId){
-        return null;
-    }
-
-    public JSONObject shareDevices(Integer customerId,String phone){
-        String postUrl = "https://open.ys7.com/api/lapp/ram/account/create";
-        JSONObject ret =new JSONObject();
-
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-
-        User user = userMapper.selectByPhone(phone);
-        if(null == user){
-            ret.put("status","403");
-            ret.put("msg","对方尚未对小程序授权,请授权后重试");
-            return ret;
-        }
-        String appKey = cameraUserMapper.selectByPrimaryKey(customerId).getAppkey();
-
-        String accountName = customerId.toString()+"_"+user.getId().toString(); //作为子账户的一台设备的开头几位
-        String password = user.getPhone();   //作为子账户的的一台设备开头的中间几位
-        String passwordMD5 = appKey+"#"+password;
-        passwordMD5 = DigestUtils.md5DigestAsHex(passwordMD5.getBytes()).toLowerCase();
-
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken)
-                .add("accountName",accountName)
-                .add("password",passwordMD5).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-        String result = POST(request);
-        if(null != result){
-            JSONObject resultJson = JSONObject.parseObject(result);
-            String accountId = resultJson.getJSONObject("data").getString("accountId");   //做为子账户一台设备号的最后部分
-            String camera_id = accountName+"_"+password+"_"+accountId;  //mainId_subId_password_accountId
-            CameraUserRelation cameraUserRelation = new CameraUserRelation();
-            cameraUserRelation.setCameraId(camera_id);
-            cameraUserRelation.setCustomerId(user.getId());
-            int sqlUpdate = relationMapper.insertSelective(cameraUserRelation);
-            if(1 == sqlUpdate){
-                System.out.println("cameraId:"+camera_id);
-                ret.put("status","200");
-                ret.put("msg",resultJson.getJSONObject("data"));
-            }
-        }else{
-            ret.put("status","500");
-            ret.put("msg","网络访问错误");
-        }
-        return ret;
-    }
-
-    public JSONObject getSharedList(Integer customerId){
-        String postUrl = "https://open.ys7.com/api/lapp/ram/account/list";
-        JSONObject ret =new JSONObject();
-
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-        String result = POST(request);
-        if(null != result){
-            ret.put("serial","200");
-            ret.put("msg",JSONObject.parseObject(result).getJSONArray("data"));
-        }else{
-            ret.put("status","500");
-            ret.put("msg","网络访问错误");
-        }
-        return ret;
-    }
-    public JSONObject delSubAccount(Integer customerId,String accountId){
-        String postUrl = "https://open.ys7.com/api/lapp/ram/account/delete";
-
-        JSONObject ret = new JSONObject();
-
-        JSONObject res = getAccessToken(customerId);
-        if(!res.getString("status").equals("200")){
-            return res;
-        }
-        String accessToken = res.getString("msg");
-
-        okhttp3.RequestBody body = new FormBody.Builder()
-                .add("accessToken", accessToken)
-                .add("accountId",accountId).build();
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(body)
-                .build();
-
-        String response = this.POST(request);
-        if(null != response){
-            ret.put("msg",JSONObject.parseObject(response).getString("msg"));
-            ret.put("status","200");
-        }else{
-            ret.put("status","500");
-            ret.put("msg","内部错误");
-        }
-        return ret;
-    }
-
     @Override
     public JSONObject  updateDeviceInfo(JSONObject cameraJson) {
 
         return setDeviceName(cameraJson.getInteger("customerId"),cameraJson.getString("serial"),
                       cameraJson.getString("name"));
-    }
-
-    @Override
-    public int updateAlarmSettings(Integer customerId, String serial) {
-        return 0;
     }
 
     @Override
