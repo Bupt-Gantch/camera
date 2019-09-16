@@ -455,6 +455,11 @@ public class CameraServiceImpl implements CameraService {
             ret.put("status","200");
         }else{
             ret.put("msg","没有找到该用户的设备！");
+            JSONObject data = new JSONObject();
+            data.put("customerId",customerId);
+            data.put("appKey","9a51a0bfb7234668a6cbfb5b7c23271d");
+            data.put("appSecret","cda559f8fdfd5d82234b48c0db9d61c9");
+            register(data);
             ret.put("status","404");
         }
         return ret;
